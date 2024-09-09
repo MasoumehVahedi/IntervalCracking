@@ -2,6 +2,7 @@ import math
 from collections import deque
 
 
+
 # ----------------------------------------------------------------------- #
 #                            Interval (range [min, max])
 # ----------------------------------------------------------------------- #
@@ -55,10 +56,10 @@ class IntervalTree:
 
 
 # ----------------------------------------------------------------------- #
-#                           AdaptiveSPLindex Class
+#                           IntervalCracking Class
 # ----------------------------------------------------------------------- #
 
-class AdaptiveSPLindex:
+class IntervalCracking:
     def __init__(self, intervals, max_entries=128, min_entries=None, FIRST_INIT=21474836, END_INIT=-21474836):
         self.max_entries = max_entries
         self.min_entries = min_entries or math.ceil(max_entries / 2)
@@ -77,13 +78,12 @@ class AdaptiveSPLindex:
         initial_node.entries = [IntervalTreeEntry(Interval(interval[0][0], interval[0][1]), interval[1]) for interval in intervals]
         root_node.entries[0].child = initial_node
 
-
     def adaptiveSearch(self, query_interval, query):
-        queue = deque([self.tree.root])
+        queue = deque([self.tree.root])  # Use a queue for BFS instead of a stack
         query_results = []
 
-        while stack:
-            node = queue.popleft()
+        while queue:
+            node = queue.popleft()  # Use popleft() to implement FIFO
 
             if node.is_leaf:
                 results = self.searchAndCrack(query_interval, query, node)
@@ -92,11 +92,13 @@ class AdaptiveSPLindex:
             else:
                 for entry in node.entries:
                     if entry.child and self.intervals_overlap(entry.interval, query_interval):
-                        queue.append(entry.child)
+                        queue.append(entry.child)  # Add child nodes to the end of the queue
 
         return query_results
 
+
     def searchAndCrack(self, query_interval, query, node):
+        #xmin, xmax, ymin, ymax = query
         xmin, ymin, xmax, ymax = query
         query_results = []
 
@@ -125,7 +127,10 @@ class AdaptiveSPLindex:
                                               Interval(self.FIRST_INIT, self.END_INIT), True)
 
         right_intervals = self.local_intervals[crack_index_max:]
+        #print("right_intervals = ", right_intervals)
+
         overlapped_intervals = self.local_intervals[crack_index_min:crack_index_max]
+        #print("overlapped_intervals = ", overlapped_intervals)
 
         node.entries.clear()  # Clearing the current node entries
 
@@ -235,6 +240,7 @@ class AdaptiveSPLindex:
 
         result = []
         queue = deque([(node, level)])
+
         while queue:
             node, level = queue.popleft()
             for entry in node.entries:

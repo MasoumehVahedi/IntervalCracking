@@ -57,19 +57,19 @@ def intervalCracking(df, interval_queries):
 
 if __name__ == "__main__":
     df = pd.read_csv("shuffled_HDHI.csv")
-    df['D.O.A'] = pd.to_datetime(df['D.O.A'], errors='coerce', format='%d/%m/%Y')
-    df['D.O.D'] = pd.to_datetime(df['D.O.D'], errors='coerce', format='%d/%m/%Y')
+    df['D.O.A'] = pd.to_datetime(df['D.O.A'], errors='coerce')
+    df['D.O.D'] = pd.to_datetime(df['D.O.D'], errors='coerce')
 
     # Remove rows where 'D.O.A' is NaT (missing values)
     df = df.dropna(subset=['D.O.A'])
     reference_date = df['D.O.A'].min()
 
-    #interval_queries = pd.read_csv("interval_queries_30days_10K.csv")  # CPU time for scan = 3.0115809440612793 seconds
-    #interval_queries = pd.read_csv("interval_queries_7days_10K.csv")   # CPU time for cracking = 2.5223469734191895 seconds
-    #interval_queries = pd.read_csv("interval_queries_1day_10K.csv")     # CPU time for cracking = 2.3298821449279785 seconds
-    interval_queries = pd.read_csv("mixed_interval_queries_10K.csv")     # CPU time for cracking = 2.5149221420288086 seconds
-    interval_queries['start_date'] = pd.to_datetime(interval_queries['start_date'], errors='coerce', format='%Y-%m-%d')
-    interval_queries['end_date'] = pd.to_datetime(interval_queries['end_date'], errors='coerce', format='%Y-%m-%d')
+    #interval_queries = pd.read_csv("interval_queries_30days_10K.csv")  # CPU time for scan = 2.44 seconds
+    #interval_queries = pd.read_csv("interval_queries_7days_10K.csv")   # CPU time for cracking = 2.004 seconds
+    #interval_queries = pd.read_csv("interval_queries_1day_10K.csv")     # CPU time for cracking = 1.80 seconds
+    interval_queries = pd.read_csv("mixed_interval_queries_10K.csv")     # CPU time for cracking = 2.024 seconds
+    interval_queries['start_date'] = pd.to_datetime(interval_queries['start_date'], errors='coerce')
+    interval_queries['end_date'] = pd.to_datetime(interval_queries['end_date'], errors='coerce')
 
     start_time = time.time()
     times = intervalCracking(df, interval_queries)
@@ -92,7 +92,7 @@ if __name__ == "__main__":
     query_times_avg = calculate_average_times(times, intervals)
 
     # Plot the times
-    plt.plot([10 ** i for i in range(len(intervals))], query_times_avg, label='Rtree', marker='o', linestyle='-',
+    plt.plot([10 ** i for i in range(len(intervals))], query_times_avg, label='carcking', marker='o', linestyle='-',
              color='indigo', markersize=10)
     plt.xscale('log')
     plt.yscale('log')
