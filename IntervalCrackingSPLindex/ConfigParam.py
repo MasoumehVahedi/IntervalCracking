@@ -18,13 +18,14 @@ class Config(object):
 
             # Data path
             filename = "data/"
-            self.water_query_range_path = os.path.join(filename, "water_query_ranges_1%.npy")
-            self.lakes_query_range_path = os.path.join(filename, "lakes_query_ranges_100K.npy")
-            self.roads_query_range_path = os.path.join(filename, "roads_query_ranges_100K.npy")
-            self.uniform_polygon_name = filename + "data/SynPolyUniform_5M.npy"  # PolyUniform data path
-            self.lakes_polygon_name = filename + "data/LandPolygons.npy"  # LandPolygon data path
-            self.water_polygon_name = filename + "data/water_poly.npy"  # WaterPolygon data path
-            self.roads_polygon_name = filename + "data/PolyCorrelated5M.npy"  # PolyCorrelated data path
+            self.water_query_range_path = os.path.join(filename, "query_ranges_water_100k.npy")
+            self.uniform_query_range_path = os.path.join(filename, "query_ranges_poly5M_100k.npy")
+            self.lakes_query_range_path = os.path.join(filename, "query_ranges_lakes_100k")
+            self.roads_query_range_path = os.path.join(filename, "query_ranges_roads_100k.npy")
+            self.uniform_polygon_name = filename + "data/SynPolyUniform_5M.npy"
+            self.lakes_polygon_name = filename + "data/lakes.npy"
+            self.water_polygon_name = filename + "data/water_poly.npy"
+            self.roads_polygon_name = filename + "data/roads.npy"
 
             print('---------Config is initilized----------')
     instance = None
