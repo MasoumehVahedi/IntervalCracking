@@ -82,7 +82,7 @@ class AdaptiveSPLindex:
         queue = deque([self.tree.root])
         query_results = []
 
-        while stack:
+        while queue:
             node = queue.popleft()
 
             if node.is_leaf:

@@ -144,11 +144,11 @@ class AdaptiveSPLindex:
         return not (interval1.max_val < interval2.min_val or interval1.min_val > interval2.max_val)
 
     def adaptiveSearch(self, query_interval, query):
-        stack = deque([self.tree.root])
+        queue = deque([self.tree.root])
         query_results = []
 
-        while stack:
-            node = stack.pop()
+        while queue:
+            node = queue.popleft()
 
             if node.is_leaf:
                 results = self.searchAndCrack(query_interval, query, node)
@@ -157,7 +157,7 @@ class AdaptiveSPLindex:
             else:
                 for entry in node.entries:
                     if entry.child and self.intervals_overlap(entry.interval, query_interval):
-                        stack.append(entry.child)
+                        queue.append(entry.child)
 
         return query_results
 

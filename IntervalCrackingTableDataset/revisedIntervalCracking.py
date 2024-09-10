@@ -56,24 +56,24 @@ class AdaptiveSPLindex:
         root_node.entries[0].child = initial_node
 
 
-    def adaptiveSearch(self, query_interval):
-        stack = deque([self.tree.root])
+    def adaptiveSearch(self, query_interval, query):
+        queue = deque([self.tree.root])
         query_results = []
 
-        while stack:
-            node = stack.pop()
+        while queue:
+            node = queue.popleft()
 
             if node.is_leaf:
-                results = self.searchAndCrack(query_interval, node)
+                results = self.searchAndCrack(query_interval, query, node)
                 if results:
                     query_results.extend(results)
             else:
                 for entry in node.entries:
                     if entry.child and self.intervals_overlap(entry.interval, query_interval):
-                        stack.append(entry.child)
+                        queue.append(entry.child)
 
         return query_results
-
+        
     def searchAndCrack(self, query_interval, node):
         query_results = []
 
