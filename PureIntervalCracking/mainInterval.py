@@ -24,19 +24,14 @@ def getZAddressesForMBRsInCluster(polygons):
 
 
 def main():
-    #polygons_path = "/Users/vahedi/Library/CloudStorage/OneDrive-RoskildeUniversitet/Python Projects/AdaptiveSPLindex/DebuggingAdaptiveSPLindex/water_poly.npy"
-    polygons_path = "/Users/vahedi/Library/CloudStorage/OneDrive-RoskildeUniversitet/Python Projects/AdaptiveSPLindex/MYFINALCrackingSPLindex/roads_mbrs_float.txt"
-    #polygons_path = "/Users/vahedi/Library/CloudStorage/OneDrive-RoskildeUniversitet/Python Projects/AdaptiveSPLindex/MYFINALCrackingSPLindex/lakes.npy"
-    #polygons = np.load(polygons_path, allow_pickle=True)[:100000]
-    polygons = np.loadtxt(polygons_path)[:10000000]
-    print(len(polygons))
-    #query_path = "/Users/vahedi/Library/CloudStorage/OneDrive-RoskildeUniversitet/Python Projects/AdaptiveSPLindex/DebuggingAdaptiveSPLindex/query_ranges_5M_10k.npy"
-    #query_path = "/Users/vahedi/Library/CloudStorage/OneDrive-RoskildeUniversitet/Python Projects/AdaptiveSPLindex/DebuggingAdaptiveSPLindex/query_ranges_5M_10k.npy"
-    #query_path = "/Users/vahedi/Library/CloudStorage/OneDrive-RoskildeUniversitet/Python Projects/AdaptiveSPLindex/DebuggingAdaptiveSPLindex/expanded_lakes_mbrs.npy"
-    query_path = "/Users/vahedi/Library/CloudStorage/OneDrive-RoskildeUniversitet/Python Projects/AdaptiveSPLindex/MYFINALCrackingSPLindex/usa_e-2%_uniform_1m_other_float.txt"
-    #query_ranges = np.load(query_path, allow_pickle=True)[:1000]
-    print("query_ranges = ", len(query_ranges))
-
+    data_dir = "./"
+    polygons_path = os.path.join(data_dir, Config().water_polygon_name)
+    polygons = np.load(polygons_path, allow_pickle=True)
+    
+    range_query_path = "./"
+    query_path = os.path.join(range_query_path, Config().water_query_range_path)
+    query_ranges = np.load(query_path, allow_pickle=True)
+    
     start_cpu_time = time.time()
     mbr_z_intervals = getZAddressesForMBRsInCluster(polygons)
     index = IntervalCracking(mbr_z_intervals)
@@ -57,7 +52,7 @@ def main():
 
     end_cpu_time = time.time()
     cpu_time = end_cpu_time - start_cpu_time
-    print("CPU time for AdaptiveSPLindex =", cpu_time, "seconds")
+    print("CPU time for pure interval cracking =", cpu_time, "seconds")
 
 
 if __name__ == "__main__":
