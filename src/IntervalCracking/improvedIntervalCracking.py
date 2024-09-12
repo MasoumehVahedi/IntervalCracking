@@ -16,48 +16,11 @@
 import math
 from collections import deque
 
+from interval_structures import Interval, IntervalTree, IntervalTreeEntry, IntervalTreeNode
 
 
-class Interval:
-    def __init__(self, min_val, max_val):
-        self.min_val = min_val
-        self.max_val = max_val
-
-    def __repr__(self):
-        return f'[{self.min_val}, {self.max_val}]'
-
-    def intersects(self, other):
-        return not (self.max_val < other.min_val or self.min_val > other.max_val)
-
-
-class IntervalEntry:
-    def __init__(self, interval, data=None, child=None):
-        self.interval = interval
-        self.data = data
-        self.child = child
-
-    def __repr__(self):
-        return f'RTreeEntry({self.interval})'
-
-
-class IntervalNode:
-    def __init__(self, is_leaf=True, parent=None, level=0):
-        self.entries = []
-        self.is_leaf = is_leaf
-        self.parent = parent
-        self.level = level
-
-    def __repr__(self):
-        return f'RTreeNode(Level={self.level}, IsLeaf={self.is_leaf}, Entries={len(self.entries)})'
-
-
-class IntervalTree:
-    def __init__(self):
-        self.root = IntervalNode(is_leaf=True, level=0)
-
-
-class AdaptiveSPLindex:
-    def __init__(self, intervals=None, max_entries=400, min_entries=None, FIRST_INIT=float("inf"), END_INIT=float("-inf")):
+class IntervalCracking:
+    def __init__(self, intervals=None, max_entries=200, min_entries=None, FIRST_INIT=float("inf"), END_INIT=float("-inf")):
         self.max_entries = max_entries
         self.min_entries = min_entries or math.ceil(max_entries / 2)
         self.FIRST_INIT = FIRST_INIT
@@ -77,7 +40,7 @@ class AdaptiveSPLindex:
         while not node.is_leaf:
             node = self.choose_subtree(node, interval_obj)
 
-        node.entries.append(IntervalEntry(interval_obj, interval[1]))
+        node.entries.append(IntervalTreeEntry(interval_obj, interval[1]))
 
         if len(node.entries) > self.max_entries:
             self.split_node(node)
@@ -90,7 +53,7 @@ class AdaptiveSPLindex:
         return best_entry.child
 
     def enlargement_needed(self, interval1, interval2):
-        combined_interval = self.calculate_bounding_interval([IntervalEntry(interval1), IntervalEntry(interval2)])
+        combined_interval = self.calculate_bounding_interval([IntervalTreeEntry(interval1), IntervalTreeEntry(interval2)])
         return (combined_interval.max_val - combined_interval.min_val) - (interval1.max_val - interval1.min_val)
 
     def split_node(self, node):
@@ -100,17 +63,17 @@ class AdaptiveSPLindex:
         node.is_leaf = False
 
         if len(entries) <= self.min_entries:
-            left_child = IntervalNode(is_leaf=True, parent=node, level=node.level + 1)
-            right_child = IntervalNode(is_leaf=True, parent=node, level=node.level + 1)
+            left_child = IntervalTreeNode(is_leaf=True, parent=node, level=node.level + 1)
+            right_child = IntervalTreeNode(is_leaf=True, parent=node, level=node.level + 1)
             midpoint = len(entries) // 2
             left_child.entries = entries[:midpoint]
             right_child.entries = entries[midpoint:]
-            node.entries.append(IntervalEntry(self.calculate_bounding_interval(left_child.entries), child=left_child))
-            node.entries.append(IntervalEntry(self.calculate_bounding_interval(right_child.entries), child=right_child))
+            node.entries.append(IntervalTreeEntry(self.calculate_bounding_interval(left_child.entries), child=left_child))
+            node.entries.append(IntervalTreeEntry(self.calculate_bounding_interval(right_child.entries), child=right_child))
         else:
-            left_child = IntervalNode(is_leaf=True, parent=node, level=node.level + 1)
-            right_child = IntervalNode(is_leaf=True, parent=node, level=node.level + 1)
-            overlap_child = IntervalNode(is_leaf=True, parent=node, level=node.level + 1)
+            left_child = IntervalTreeNode(is_leaf=True, parent=node, level=node.level + 1)
+            right_child = IntervalTreeNode(is_leaf=True, parent=node, level=node.level + 1)
+            overlap_child = IntervalTreeNode(is_leaf=True, parent=node, level=node.level + 1)
 
             left_entries, right_entries, overlap_entries = self.median_split(entries)
 
@@ -118,11 +81,11 @@ class AdaptiveSPLindex:
             right_child.entries = right_entries
             overlap_child.entries = overlap_entries
 
-            node.entries.append(IntervalEntry(self.calculate_bounding_interval(left_child.entries), child=left_child))
-            node.entries.append(IntervalEntry(self.calculate_bounding_interval(right_child.entries), child=right_child))
+            node.entries.append(IntervalTreeEntry(self.calculate_bounding_interval(left_child.entries), child=left_child))
+            node.entries.append(IntervalTreeEntry(self.calculate_bounding_interval(right_child.entries), child=right_child))
             if overlap_entries:
                 node.entries.append(
-                    IntervalEntry(self.calculate_bounding_interval(overlap_child.entries), child=overlap_child))
+                    IntervalTreeEntry(self.calculate_bounding_interval(overlap_child.entries), child=overlap_child))
 
     def median_split(self, entries):
         """
@@ -192,25 +155,25 @@ class AdaptiveSPLindex:
         node.entries.clear()
 
         if left_intervals:
-            left_child = IntervalNode(is_leaf=True, parent=node, level=node.level + 1)
-            left_child.entries = [IntervalEntry(interval, data=data) for interval, data in left_intervals]
+            left_child = IntervalTreeNode(is_leaf=True, parent=node, level=node.level + 1)
+            left_child.entries = [IntervalTreeEntry(interval, data=data) for interval, data in left_intervals]
             left_bounding_interval = self.calculate_bounding_interval(left_child.entries)
             node.is_leaf = False
-            node.entries.append(IntervalEntry(left_bounding_interval, child=left_child))
+            node.entries.append(IntervalTreeEntry(left_bounding_interval, child=left_child))
 
         if right_intervals:
-            right_child = IntervalNode(is_leaf=True, parent=node, level=node.level + 1)
-            right_child.entries = [IntervalEntry(interval, data=data) for interval, data in right_intervals]
+            right_child = IntervalTreeNode(is_leaf=True, parent=node, level=node.level + 1)
+            right_child.entries = [IntervalTreeEntry(interval, data=data) for interval, data in right_intervals]
             right_bounding_interval = self.calculate_bounding_interval(right_child.entries)
             node.is_leaf = False
-            node.entries.append(IntervalEntry(right_bounding_interval, child=right_child))
+            node.entries.append(IntervalTreeEntry(right_bounding_interval, child=right_child))
 
         if overlapped_intervals:
-            overlapped_child = IntervalNode(is_leaf=True, parent=node, level=node.level + 1)
-            overlapped_child.entries = [IntervalEntry(interval, data=data) for interval, data in overlapped_intervals]
+            overlapped_child = IntervalTreeNode(is_leaf=True, parent=node, level=node.level + 1)
+            overlapped_child.entries = [IntervalTreeEntry(interval, data=data) for interval, data in overlapped_intervals]
             overlapped_bounding_interval = self.calculate_bounding_interval(overlapped_child.entries)
             node.is_leaf = False
-            node.entries.append(IntervalEntry(overlapped_bounding_interval, child=overlapped_child))
+            node.entries.append(IntervalTreeEntry(overlapped_bounding_interval, child=overlapped_child))
 
         for entry in overlapped_intervals:
             mbr = entry[1]

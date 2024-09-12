@@ -1,9 +1,17 @@
+import os
+import sys
 import logging
 import numpy as np
 from sklearn.cluster import Birch
 
-from IntervalCracking import AdaptiveSPLindex, Interval
-#from improvedIntervalCracking import AdaptiveSPLindex, Interval
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+
+from IntervalCracking.interval_structures import Interval
+from IntervalCracking.intervalCracking import IntervalCracking
+
+#from IntervalCracking.improvedIntervalCracking import IntervalCracking, Interval
 from ConfigParam import Config
 from ZAdress import MortonCode
 from helpers import calculate_bounding_box
@@ -11,7 +19,7 @@ from helpers import calculate_bounding_box
 logging.basicConfig(level=logging.DEBUG)
 
 
-class SPLindex:
+class CrackingSPLindex:
     ##### Static Variables #####
     _instance = None  # Singleton instance tracker
     cluster_indices = {}  # Maps cluster_id to CrackingSPLindex instance
@@ -120,14 +128,14 @@ class SPLindex:
         query_rect = Interval(zmin, zmax)
         query_results = []
         for cluster_id, _ in predicted_labels:
-            if cluster_id not in SPLindex.cluster_indices:
+            if cluster_id not in CrackingSPLindex.cluster_indices:
                 # Load the intervals for the cluster only once
                 pred_cluster = all_mbr_z_intervals.get(cluster_id)
                 if not pred_cluster:
                     continue
-                SPLindex.cluster_indices[cluster_id] = AdaptiveSPLindex(pred_cluster)
+                CrackingSPLindex.cluster_indices[cluster_id] = IntervalCracking(pred_cluster)
 
-            adaptive_index = SPLindex.cluster_indices[cluster_id]
+            adaptive_index = CrackingSPLindex.cluster_indices[cluster_id]
             query_result = adaptive_index.adaptiveSearch(query_rect, query)
             query_results.extend(query_result)
         return query_results

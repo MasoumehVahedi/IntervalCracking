@@ -1,11 +1,20 @@
-import numpy as np
-import time
+import os
 import sys
+import time
+import numpy as np
 
-sys.path.append('../')
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+cracking_splindex_dir = os.path.join(parent_dir, 'CrackingSPLindex')
+sys.path.append(cracking_splindex_dir)
 
-from IntervalCracking import Interval, IntervalCracking
+from IntervalCracking.interval_structures import Interval
+from IntervalCracking.intervalCracking import IntervalCracking
+
+from ConfigParam import Config
 from ZAdress import MortonCode
+
 
 
 def getMBR(polygon):
@@ -13,12 +22,14 @@ def getMBR(polygon):
 
 
 def getZAddressesForMBRsInCluster(polygons):
+    X = np.array([getMBR(polygon) for polygon in polygons])
+    data = [(polygon, mbr) for polygon, mbr in zip(polygons, X)]
     mbr_z_intervals = []
-    for mbr in polygons:
+    for original_polygon, mbr in data:
         zmin = MortonCode().interleave_latlng(mbr[1], mbr[0])  # miny, minx
         zmax = MortonCode().interleave_latlng(mbr[3], mbr[2])  # maxy, maxx
         if zmin > zmax:
-            zmin, zmax = zmax, zmin  # Swap if out of order
+            zmin, zmax = zmax, zmin
         mbr_z_intervals.append([(zmin, zmax), mbr])
     return mbr_z_intervals
 
@@ -45,10 +56,6 @@ def main():
         results = index.adaptiveSearch(query_interval, query)
         print(f"Query {i} results: {len(results)}")
 
-    # Print the tree structure after the queries
-    #tree_structure = index.print_tree()
-    #for line in tree_structure:
-    #    print(line)
 
     end_cpu_time = time.time()
     cpu_time = end_cpu_time - start_cpu_time

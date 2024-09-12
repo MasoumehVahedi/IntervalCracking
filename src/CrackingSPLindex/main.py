@@ -7,15 +7,9 @@ import numpy as np
 
 sys.path.append('../')
 
-import matplotlib.pyplot as plt
-import cProfile
-import pstats
-
 from ConfigParam import Config
 from treeModel import TreeBuilder
-from CrackingSPLindex import SPLindex
-from ZAdress import MortonCode
-from helpers import *
+from crackingSPLindex import CrackingSPLindex
 
 
 
@@ -33,7 +27,7 @@ def index_construction():
     polygons = load_data(data_dir)
 
     print("-------- SPLindex building ---------")
-    spli = SPLindex(polygons)
+    spli = CrackingSPLindex(polygons)
     clusters, cluster_labels = spli.clusters, spli.cluster_labels
     z_ranges_sorted, sorted_clusters_IDs, sorted_clusters = spli.sortClustersZaddress(clusters)
     all_mbr_z_intervals = spli.getZAddressesForMBRsInCluster(sorted_clusters)

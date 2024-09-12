@@ -1,64 +1,15 @@
 import math
 from collections import deque
 
-
-# ----------------------------------------------------------------------- #
-#                            Interval (range [min, max])
-# ----------------------------------------------------------------------- #
-
-class Interval:
-    def __init__(self, min_val, max_val):
-        self.min_val = min_val
-        self.max_val = max_val
-
-    def __repr__(self):
-        return f'[{self.min_val}, {self.max_val}]'
-
-
-# ----------------------------------------------------------------------- #
-#                           Interval Entry
-# ----------------------------------------------------------------------- #
-
-class IntervalTreeEntry:
-    def __init__(self, interval, data=None, child=None):
-        self.interval = interval
-        self.data = data
-        self.child = child
-
-    def __repr__(self):
-        return f'RTreeEntry({self.interval})'
-
-
-# ----------------------------------------------------------------------- #
-#                           Interval Node
-# ----------------------------------------------------------------------- #
-
-class IntervalTreeNode:
-    def __init__(self, is_leaf=True, parent=None, level=0):
-        self.entries = []
-        self.is_leaf = is_leaf
-        self.parent = parent
-        self.level = level
-
-    def __repr__(self):
-        return f'RTreeNode(Level={self.level}, IsLeaf={self.is_leaf}, Entries={len(self.entries)})'
-
-
-# ----------------------------------------------------------------------- #
-#                           Interval Tree
-# ----------------------------------------------------------------------- #
-
-class IntervalTree:
-    def __init__(self):
-        self.root = IntervalTreeNode(is_leaf=True, level=0)
+from .interval_structures import Interval, IntervalTree, IntervalTreeEntry, IntervalTreeNode
 
 
 
 # ----------------------------------------------------------------------- #
-#                           AdaptiveSPLindex Class
+#                           Interval Cracking Class
 # ----------------------------------------------------------------------- #
 
-class AdaptiveSPLindex:
+class IntervalCracking:
     def __init__(self, intervals, max_entries=128, min_entries=None, FIRST_INIT=21474836, END_INIT=-21474836):
         self.max_entries = max_entries
         self.min_entries = min_entries or math.ceil(max_entries / 2)
@@ -95,6 +46,7 @@ class AdaptiveSPLindex:
                         queue.append(entry.child)
 
         return query_results
+
 
     def searchAndCrack(self, query_interval, query, node):
         xmin, ymin, xmax, ymax = query

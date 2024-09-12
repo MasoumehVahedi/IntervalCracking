@@ -1,63 +1,8 @@
 import math
 from collections import deque
 
+from IntervalCracking.interval_structures import Interval, IntervalTree, IntervalTreeEntry, IntervalTreeNode
 
-
-# ----------------------------------------------------------------------- #
-#                            Interval (range [min, max])
-# ----------------------------------------------------------------------- #
-
-class Interval:
-    def __init__(self, min_val, max_val):
-        self.min_val = min_val
-        self.max_val = max_val
-
-    def __repr__(self):
-        return f'[{self.min_val}, {self.max_val}]'
-
-
-# ----------------------------------------------------------------------- #
-#                           Interval Entry
-# ----------------------------------------------------------------------- #
-
-class IntervalTreeEntry:
-    def __init__(self, interval, data=None, child=None):
-        self.interval = interval
-        self.data = data
-        self.child = child
-
-    def __repr__(self):
-        return f'RTreeEntry({self.interval})'
-
-
-# ----------------------------------------------------------------------- #
-#                           Interval Node
-# ----------------------------------------------------------------------- #
-
-class IntervalTreeNode:
-    def __init__(self, is_leaf=True, parent=None, level=0):
-        self.entries = []
-        self.is_leaf = is_leaf
-        self.parent = parent
-        self.level = level
-
-    def __repr__(self):
-        return f'RTreeNode(Level={self.level}, IsLeaf={self.is_leaf}, Entries={len(self.entries)})'
-
-
-# ----------------------------------------------------------------------- #
-#                           Interval Tree
-# ----------------------------------------------------------------------- #
-
-class IntervalTree:
-    def __init__(self):
-        self.root = IntervalTreeNode(is_leaf=True, level=0)
-
-
-
-# ----------------------------------------------------------------------- #
-#                           IntervalCracking Class
-# ----------------------------------------------------------------------- #
 
 class IntervalCracking:
     def __init__(self, intervals, max_entries=128, min_entries=None, FIRST_INIT=21474836, END_INIT=-21474836):
@@ -78,38 +23,34 @@ class IntervalCracking:
         initial_node.entries = [IntervalTreeEntry(Interval(interval[0][0], interval[0][1]), interval[1]) for interval in intervals]
         root_node.entries[0].child = initial_node
 
-    def adaptiveSearch(self, query_interval, query):
-        queue = deque([self.tree.root])  # Use a queue for BFS instead of a stack
+
+    def adaptiveSearch(self, query_interval):
+        queue = deque([self.tree.root])
         query_results = []
 
         while queue:
-            node = queue.popleft()  # Use popleft() to implement FIFO
+            node = queue.popleft()
 
             if node.is_leaf:
-                results = self.searchAndCrack(query_interval, query, node)
+                results = self.searchAndCrack(query_interval, node)
                 if results:
                     query_results.extend(results)
             else:
                 for entry in node.entries:
                     if entry.child and self.intervals_overlap(entry.interval, query_interval):
-                        queue.append(entry.child)  # Add child nodes to the end of the queue
+                        queue.append(entry.child)
 
         return query_results
 
 
-    def searchAndCrack(self, query_interval, query, node):
-        #xmin, xmax, ymin, ymax = query
-        xmin, ymin, xmax, ymax = query
+    def searchAndCrack(self, query_interval, node):
         query_results = []
 
-        #if isinstance(node.entries[0], tuple):
-        #    node.entries = [RTreeEntry(interval=entry[0], data=entry[1]) for entry in node.entries]
         self.local_intervals = [(entry.interval, entry.data) for entry in node.entries]
 
-        # If the number of intervals is small, no need to crack, just search
         if len(node.entries) <= self.max_entries:
             query_results.extend(
-                [entry.data for entry in node.entries if (entry.data[2] > xmin and entry.data[0] < xmax and entry.data[3] > ymin and entry.data[1] < ymax)])
+                [entry.data for entry in node.entries])
             return query_results
 
 
@@ -127,10 +68,7 @@ class IntervalCracking:
                                               Interval(self.FIRST_INIT, self.END_INIT), True)
 
         right_intervals = self.local_intervals[crack_index_max:]
-        #print("right_intervals = ", right_intervals)
-
         overlapped_intervals = self.local_intervals[crack_index_min:crack_index_max]
-        #print("overlapped_intervals = ", overlapped_intervals)
 
         node.entries.clear()  # Clearing the current node entries
 
@@ -155,12 +93,8 @@ class IntervalCracking:
             node.is_leaf = False
             node.entries.append(IntervalTreeEntry(overlapped_bounding_interval, child=overlapped_child))
 
-        for entry in overlapped_intervals:
-            mbr = entry[1]
-            if mbr[2] > xmin and mbr[0] < xmax and mbr[3] > ymin and mbr[1] < ymax:
-                query_results.append(mbr)
+        return [entry for entry in overlapped_intervals]
 
-        return query_results
 
     def calculate_bounding_interval(self, intervals):
         min_val = min(interval[0].min_val for interval in intervals)
@@ -240,7 +174,6 @@ class IntervalCracking:
 
         result = []
         queue = deque([(node, level)])
-
         while queue:
             node, level = queue.popleft()
             for entry in node.entries:

@@ -1,9 +1,20 @@
+import os
+import sys
 import time
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from datetime import timedelta, datetime
-from revisedIntervalCracking import AdaptiveSPLindex, Interval
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+
+print(parent_dir)
+print(sys.path)
+
+from IntervalCracking.interval_structures import Interval
+from revisedIntervalCracking import IntervalCracking
 
 ############ Interval Cracking ###########
 """
@@ -30,7 +41,7 @@ def intervalCracking(df, interval_queries):
         intervals.append([[start_day, end_day], index])
 
     # Now pass all intervals into AdaptiveSPLindex at once
-    adaptive_index = AdaptiveSPLindex(intervals=intervals, FIRST_INIT=0,
+    cracking_index = IntervalCracking(intervals=intervals, FIRST_INIT=0,
                                       END_INIT=(df['D.O.D'].max() - reference_date).days)
 
     times = []
@@ -45,7 +56,7 @@ def intervalCracking(df, interval_queries):
         # Define the interval query using the integer representation
         query_interval = Interval(start_day, end_day)
         start_time = time.time()
-        results = adaptive_index.adaptiveSearch(query_interval)
+        results = cracking_index.adaptiveSearch(query_interval)
         end_time = time.time()
         total_time = end_time - start_time
         times.append(total_time)
