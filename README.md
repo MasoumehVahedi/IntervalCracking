@@ -13,7 +13,7 @@ The data and workload should be in this format for an example two-dimensional da
 xmin, ymin, xmax, ymax.
 
 1- Download Hospital Admissions Data [here](https://www.kaggle.com/datasets/ashishsahani/hospital-admissions-data)
-This dataset is being provided under creative commons License (Attribution-Non-Commercial-Share Alike 4.0 International (CC BY-NC-SA 4.0)) https://creativecommons.org/licenses/by-nc-sa/4.0/
+(This dataset is being provided under creative commons License [(Attribution-Non-Commercial-Share Alike 4.0 International (CC BY-NC-SA 4.0))] (https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
 2- Download Water dataset [here](https://osmdata.openstreetmap.de/data/water-polygons.html)
 
