@@ -156,8 +156,8 @@ class IntervalCracking:
            :param low: Lower index of the range to partition
            :param high: Upper index of the range to partition
            :param pivot: The pivot value to partition around
-           :param left_rect: Rectangle representing the left boundary
-           :param right_rect: Rectangle representing the right boundary
+           :param left_rect: Interval representing the left boundary
+           :param right_rect: Interval representing the right boundary
            :param check_min: Boolean flag to check against the minimum value of intervals
         """
         x1, x2 = low, high - 1
