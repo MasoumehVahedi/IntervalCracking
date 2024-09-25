@@ -150,6 +150,16 @@ class IntervalCracking:
         return self.partition(intervals, low, high, crack_value, left_rect, right_rect, check_min)
 
     def partition(self, intervals, low, high, crack_value, left_rect, right_rect, check_min):
+        """
+           Partitions MBR z-intervals around a pivot value.
+
+           :param low: Lower index of the range to partition
+           :param high: Upper index of the range to partition
+           :param pivot: The pivot value to partition around
+           :param left_rect: Rectangle representing the left boundary
+           :param right_rect: Rectangle representing the right boundary
+           :param check_min: Boolean flag to check against the minimum value of intervals
+        """
         x1, x2 = low, high - 1
 
         if check_min:
