@@ -1,11 +1,11 @@
 """
     Interval Cracking illustrates how cracking (i.e., dynamically partitioning data based on queries) can speed up future range queries.
 
-    1- Core Concepts in our Code:
+    1- Core Concepts in Interval Cracking:
 
         - Dynamic Cracking: The IntervalCracking class dynamically partitions (cracks) the data based on
-                            the range of the query. This helps in segregating data into smaller chunks
-                            that are more manageable and quicker to access in subsequent queries.
+                            the query range. This helps in segregating data into smaller chunks that are more manageable and quicker to access 
+                            in subsequent queries.
 
         - Left, Overlapped, and Right Pieces: The data is partitioned into "left", "Overlapped", and "right" pieces based on the query,
                                                                     and we keep track of how the data is partitioned and what ranges each partition covers.
@@ -14,7 +14,7 @@
     2- How Cracking Helps Speed Up Subsequent Queries:
 
         -Partitioning Data: By splitting data into left and right partitions around the query range,
-                            subsequent queries can be optimized by only searching relevant partitions.
+                            subsequent queries can be optimised by only searching relevant partitions.
                             For example, a new query that falls entirely within the bounds of a previous
                             query's left piece only needs to search within that left partition, skipping the rest.
         -Reduced Search Space: Each partition effectively reduces the dataset's size that needs to be searched in future queries.
