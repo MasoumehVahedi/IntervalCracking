@@ -8,7 +8,7 @@
                             in subsequent queries.
 
         - Left, Overlapped, and Right Pieces: The data is partitioned into "left", "Overlapped", and "right" pieces based on the query,
-                                                                    and we keep track of how the data is partitioned and what ranges each partition covers.
+                             and we keep track of how the data is partitioned and what ranges each partition covers.
 
 
     2- How Cracking Helps Speed Up Subsequent Queries:
