@@ -76,7 +76,7 @@ class IntervalCracking:
 
     def searchAndCrack(self, query_interval, query, node):
         """
-           When cracking is performed, the tree will be modified to reflect the new structure:
+           Performing interval cracking and incremental build the tree data structure:
             1- Left Node: Contains intervals strictly to the left of the query interval.
             2- Right Node: Contains intervals strictly to the right of the query interval.
             3- Overlapped Node: Contains intervals that overlap with the query interval.
@@ -85,7 +85,7 @@ class IntervalCracking:
         query_results = []
 
         #if isinstance(node.entries[0], tuple):
-        #    node.entries = [RTreeEntry(interval=entry[0], data=entry[1]) for entry in node.entries]
+        #    node.entries = [IntervalTreeEntry(interval=entry[0], data=entry[1]) for entry in node.entries]
         self.local_intervals = [(entry.interval, entry.data) for entry in node.entries]
 
         # If the number of intervals is small, no need to crack, just search
