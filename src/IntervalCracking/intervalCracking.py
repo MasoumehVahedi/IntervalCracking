@@ -75,6 +75,12 @@ class IntervalCracking:
 
 
     def searchAndCrack(self, query_interval, query, node):
+        """
+           When cracking is performed, the tree will be modified to reflect the new structure:
+            1- Left Node: Contains intervals strictly to the left of the query interval.
+            2- Right Node: Contains intervals strictly to the right of the query interval.
+            3- Overlapped Node: Contains intervals that overlap with the query interval.
+        """
         xmin, ymin, xmax, ymax = query
         query_results = []
 
