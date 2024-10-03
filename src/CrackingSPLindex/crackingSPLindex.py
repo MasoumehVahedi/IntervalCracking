@@ -39,6 +39,7 @@ from helpers import calculate_bounding_box
 logging.basicConfig(level=logging.DEBUG)
 
 
+
 class CrackingSPLindex:
     ##### Static Variables #####
     _instance = None  # Singleton instance tracker
@@ -139,16 +140,16 @@ class CrackingSPLindex:
         """
            This function takes a query and then predict clusters and crack them.
 
-        - Parameters:
+          - Parameters:
             1- all_mbr_z_intervals: is a dictionary that holds the initial intervals for each cluster.
             2- model: the learned index model (SPLindex)
             3- For each query, clusters are predicted based on the query range using a model.
 
-        - Building the Tree:
+          - Building the Tree:
             If a cluster is queried for the first time, its intervals are loaded into an IntervalCracking.
             The IntervalCracking is stored in "SPLindex.cluster_indices" and is reused for subsequent queries on the same cluster.
 
-        - Querying:
+          - Querying:
             When a query is made, the method checks if the cluster's tree exists in SPLindex.cluster_indices.
             If it exists, it uses the existing tree to quickly find results.
             If it doesn’t exist, it creates the tree for the cluster and then queries it.
